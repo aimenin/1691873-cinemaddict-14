@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Артем Именин](https://up.htmlacademy.ru/ecmascript/14/user/1691873).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Андреев](https://htmlacademy.ru/profile/id812127).
 
 ---
 
