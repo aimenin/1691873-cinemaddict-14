@@ -1,5 +1,5 @@
 export const createFilmDetailsTemplate = () => {
-    return `<section class="film-details">
+  return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
         <div class="film-details__close">
@@ -168,4 +168,4 @@ export const createFilmDetailsTemplate = () => {
       </div>
     </form>
   </section>`;
-}
+};
