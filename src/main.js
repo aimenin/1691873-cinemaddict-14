@@ -15,39 +15,43 @@ const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
 
-const footerStatistic = siteFooterElement.querySelector('.footer__statistics');
+const footerStatisticElement = siteFooterElement.querySelector('.footer__statistics');
 
 render(siteHeaderElement, createPersonRankTemplate(), 'beforeend');
 render(siteMainElement, createMainMenuTemplate(), 'beforeend');
 render(siteMainElement, createFilmsTemplate(), 'beforeend');
 
-const mainFilms = siteMainElement.querySelector('.films');
+const mainFilmsElement = siteMainElement.querySelector('.films');
 
-render(mainFilms, createFilmsListTemplate(), 'beforeend');
-render(mainFilms, createFilmsListExtraTemplate(), 'beforeend');
-render(mainFilms, createFilmsListExtraTemplate(), 'beforeend');
+render(mainFilmsElement, createFilmsListTemplate(), 'beforeend');
+render(mainFilmsElement, createFilmsListExtraTemplate(), 'beforeend');
+render(mainFilmsElement, createFilmsListExtraTemplate(), 'beforeend');
 
-const filmsList = mainFilms.querySelector('.films-list');
-const filmsListContainer = mainFilms.querySelector('.films-list__container');
+const filmsListElement = mainFilmsElement.querySelector('.films-list');
+const filmsListContainerElement = mainFilmsElement.querySelector('.films-list__container');
 
-for (let i = 0; i < 5; i++) {
-  render(filmsListContainer, createFilmCartTemplate(), 'beforeend');
+const amountOfMainFilms = 5;
+
+for (let i = 0; i < amountOfMainFilms; i++) {
+  render(filmsListContainerElement, createFilmCartTemplate(), 'beforeend');
 }
 
-render(filmsList, createButtonShowMoreTemplate(), 'beforeend');
+render(filmsListElement, createButtonShowMoreTemplate(), 'beforeend');
 
-const topRatedFilmsBlock = mainFilms.querySelectorAll('.films-list.films-list--extra')[0];
-const mostCommentedFilmsBlock = mainFilms.querySelectorAll('.films-list.films-list--extra')[1];
+const topRatedFilmsBlockElement = mainFilmsElement.querySelectorAll('.films-list.films-list--extra')[0];
+const mostCommentedFilmsBlockElement = mainFilmsElement.querySelectorAll('.films-list.films-list--extra')[1];
 
-const topRatedListFilms = topRatedFilmsBlock.querySelector('.films-list__container');
-const mostCommentedListFilms = mostCommentedFilmsBlock.querySelector('.films-list__container');
+const topRatedListFilmsElement = topRatedFilmsBlockElement.querySelector('.films-list__container');
+const mostCommentedListFilmsElement = mostCommentedFilmsBlockElement.querySelector('.films-list__container');
 
-for (let i = 0; i < 2; i++) {
-  render(topRatedListFilms, createFilmCartTemplate(), 'beforeend');
+const amountOfExtraFilms = 2;
+
+for (let i = 0; i < amountOfExtraFilms; i++) {
+  render(topRatedListFilmsElement, createFilmCartTemplate(), 'beforeend');
 }
 
-for (let i = 0; i < 2; i++) {
-  render(mostCommentedListFilms, createFilmCartTemplate(), 'beforeend');
+for (let i = 0; i < amountOfExtraFilms; i++) {
+  render(mostCommentedListFilmsElement, createFilmCartTemplate(), 'beforeend');
 }
 
-render(footerStatistic, createFooterStatisticTemplate(), 'beforeend');
+render(footerStatisticElement, createFooterStatisticTemplate(), 'beforeend');
