@@ -1,6 +1,6 @@
 // шаблон отображает количество фильмов
-export const createFooterStatisticTemplate = () => {
+export const createFooterStatisticTemplate = (amount) => {
   return `
-  <p>130 291 movies inside</p>
+  <p>${amount} movies inside</p>
   `;
 };
