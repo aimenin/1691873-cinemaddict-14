@@ -2,7 +2,7 @@ export const createFilmDetailsTemplate = (movie) => {
   const {name, posterUrl, ageRating, originalName, rating, director, writers, actors, duration, releaseTime, countries, genres, description} = movie;
 
   const writersString = writers.join(', ');
-  const actorsString = writers.join(', ');
+  const actorsString = actors.join(', ');
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -52,17 +52,12 @@ export const createFilmDetailsTemplate = (movie) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${countries.length > 1 ? 'Countries' : 'Country'}</td>
-                ${countries.map(element => {
-                  return `<td class="film-details__cell">${element}</td>`
-                }).join('')}
-                <td class="film-details__cell">USA</td>
+                ${countries.map((element) => { return `<td class="film-details__cell">${element}</td>`;}).join('')}
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${genres.length > 1 ? 'Genres' : 'Genre'}</td>
                 <td class="film-details__cell">
-                  ${genres.map(element => {
-                    return `<span class="film-details__genre">${element}</span>`
-                  }).join('')}
+                  ${genres.map((element) => { return `<span class="film-details__genre">${element}</span>`; }).join('')}
               </tr>
             </table>
   

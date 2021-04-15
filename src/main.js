@@ -7,7 +7,6 @@ import {createFilmsListExtraTemplate} from './view/filmsListExtra';
 import {createButtonShowMoreTemplate} from './view/buttonShowMore';
 import {createFooterStatisticTemplate} from './view/footerStatistic';
 import {generateMovie} from './mock/movie';
-import {createFilmDetailsTemplate} from './view/filmDetails';
 
 const EXTRA_COUNT = 2;
 const MOVIES_PER_STEP = 5;
@@ -28,15 +27,15 @@ mostCommentedMovies.sort((a, b) => {
   return b.comments.length - a.comments.length;
 });
 
-const watchlist = movies.filter(movie => {
+const watchlist = movies.filter((movie) => {
   return movie.user_details.watchlist;
 });
 
-const history = movies.filter(movie => {
+const history = movies.filter((movie) => {
   return movie.user_details.already_watched;
 });
 
-const favorites = movies.filter(movie => {
+const favorites = movies.filter((movie) => {
   return movie.user_details.favorite;
 });
 
@@ -79,7 +78,7 @@ if (numberMovies > mainCount) {
   render(filmsListElement, createButtonShowMoreTemplate(), 'beforeend');
 
   const showMoreButton = filmsListElement.querySelector('.films-list__show-more');
-  
+
   showMoreButton.addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -100,9 +99,6 @@ const mostCommentedFilmsBlockElement = mainFilmsElement.querySelectorAll('.films
 
 const topRatedListFilmsElement = topRatedFilmsBlockElement.querySelector('.films-list__container');
 const mostCommentedListFilmsElement = mostCommentedFilmsBlockElement.querySelector('.films-list__container');
-
-console.log("topRated", topRatedListFilmsElement);
-console.log("mostCommented", mostCommentedListFilmsElement);
 
 for (let i = 0; i < EXTRA_COUNT; i++) {
   render(topRatedListFilmsElement, createFilmCartTemplate(topRatedMovies[i]), 'beforeend');
