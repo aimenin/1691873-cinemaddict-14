@@ -7,6 +7,7 @@ import {createFilmsListExtraTemplate} from './view/filmsListExtra';
 import {createButtonShowMoreTemplate} from './view/buttonShowMore';
 import {createFooterStatisticTemplate} from './view/footerStatistic';
 import {generateMovie} from './mock/movie';
+import {getPersonRank, generateFilters} from './utils/utils';
 
 const EXTRA_COUNT = 2;
 const MOVIES_PER_STEP = 5;
@@ -27,23 +28,8 @@ mostCommentedMovies.sort((a, b) => {
   return b.comments.length - a.comments.length;
 });
 
-const watchlist = movies.filter((movie) => {
-  return movie.user_details.watchlist;
-});
-
-const history = movies.filter((movie) => {
-  return movie.user_details.already_watched;
-});
-
-const favorites = movies.filter((movie) => {
-  return movie.user_details.favorite;
-});
-
-const filters = {
-  watchlist,
-  history,
-  favorites,
-};
+const filters = generateFilters(movies);
+const personRank = getPersonRank(filters.watchlist);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -55,7 +41,7 @@ const siteFooterElement = document.querySelector('.footer');
 
 const footerStatisticElement = siteFooterElement.querySelector('.footer__statistics');
 
-render(siteHeaderElement, createPersonRankTemplate(watchlist), 'beforeend');
+render(siteHeaderElement, createPersonRankTemplate(personRank), 'beforeend');
 render(siteMainElement, createMainMenuTemplate(filters), 'beforeend');
 render(siteMainElement, createFilmsTemplate(), 'beforeend');
 
