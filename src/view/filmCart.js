@@ -1,12 +1,8 @@
+import {createElement} from '../utils/utils';
+
 // шаблон для карточки фильма
-export const createFilmCartTemplate = (movie = {}) => {
+const createFilmCartTemplate = (movie, description) => {
   const {name, rating, year, duration, genres, posterUrl, comments} = movie;
-
-  let {description} = movie;
-
-  if (description.length > 140) {
-    description = description.slice(0, 138) + '...';
-  }
 
   return `<article class="film-card">
   <h3 class="film-card__title">${name}</h3>
@@ -26,3 +22,28 @@ export const createFilmCartTemplate = (movie = {}) => {
   </div>
   </article>`;
 };
+
+export default class FilmCart {
+  constructor(movie, description) {
+    this._element = null;
+
+    this._movie = movie;
+    this._description = description;
+  }
+
+  getTemplate() {
+    return createFilmCartTemplate(this._movie, this._description);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
