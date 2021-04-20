@@ -1,12 +1,12 @@
-import PersonRankView from './view/personRank';
-import MainMenuView from './view/mainMenu';
-import FilmCartView from './view/filmCart';
+import PersonRankView from './view/person-rank';
+import MainMenuView from './view/main-menu';
+import FilmCartView from './view/film-cart';
 import FilmsView from './view/films';
-import FilmsListView from './view/filmsList';
-import FilmsListExtraView from './view/filmsListExtra';
-import ButtonShowMore from './view/buttonShowMore';
-import FooterStatisticView from './view/footerStatistic';
-import PopupExtraMoviesView from './view/filmDetails';
+import FilmsListView from './view/films-list';
+import FilmsListExtraView from './view/films-list-extra';
+import ButtonShowMore from './view/button-show-more';
+import FooterStatisticView from './view/footer-statistic';
+import PopupExtraMoviesView from './view/film-details';
 import {generateMovie} from './mock/movie';
 import {getPersonRank, clipDescription, generateFilters, render, RenderPosition} from './utils/utils';
 
@@ -29,17 +29,24 @@ mostCommentedMovies.sort((a, b) => {
   return b.comments.length - a.comments.length;
 });
 
-const cartClick = (movie) => {
-  const popup = new PopupExtraMoviesView(movie).getElement();
-
+const openPopup = (popup) => {
   document.body.classList.add('hide-overflow');
   document.body.appendChild(popup);
+};
+
+const closePopup = (popup) => {
+  document.body.removeChild(popup);
+  document.body.classList.remove('hide-overflow');
+};
+
+const cardClick = (movie) => {
+  const popup = new PopupExtraMoviesView(movie).getElement();
+
+  openPopup(popup);
 
   const closeButton = popup.querySelector('.film-details__close-btn');
   closeButton.addEventListener('click', () => {
-    document.body.removeChild(popup);
-    document.body.classList.remove('hide-overflow');
-    closeButton.removeEventListener('click');
+    closePopup(popup);
   });
 };
 
@@ -48,26 +55,16 @@ const renderMovie = (container, movie) => {
 
   const filmCartComponent = new FilmCartView(movie, description);
 
+  filmCartComponent.getElement().addEventListener('click', (e) => {
+    if (!['film-card__poster', 'film-card__title', 'film-card__comments'].includes(e.target.className)) {
+      return;
+    }
+
+    e.preventDefault();
+    cardClick(movie);
+  });
+
   render(container, filmCartComponent.getElement(), RenderPosition.BEFOREEND);
-
-  const poster = filmCartComponent.getElement().querySelector('.film-card__poster');
-  const title = filmCartComponent.getElement().querySelector('.film-card__title');
-  const comments = filmCartComponent.getElement().querySelector('.film-card__comments');
-
-  poster.addEventListener('click', (event) => {
-    event.preventDefault();
-    cartClick(movie);
-  });
-
-  title.addEventListener('click', (event) => {
-    event.preventDefault();
-    cartClick(movie);
-  });
-
-  comments.addEventListener('click', (event) => {
-    event.preventDefault();
-    cartClick(movie);
-  });
 };
 
 const filters = generateFilters(movies);

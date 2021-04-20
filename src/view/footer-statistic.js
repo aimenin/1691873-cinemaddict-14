@@ -5,7 +5,7 @@ const createFooterStatisticTemplate = (amount) => {
   return `<p>${amount} movies inside</p>`;
 };
 
-export default class Films {
+export default class FooterStatistic {
   constructor(amount) {
     this._element = null;
 
