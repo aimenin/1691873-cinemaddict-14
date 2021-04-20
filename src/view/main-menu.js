@@ -1,5 +1,6 @@
-// шаблон для главного меню
-export const createMainMenuTemplate = ({watchlist, history, favorites}) => {
+import {createElement} from '../utils/utils';
+
+const createMainMenuTemplate = ({watchlist, history, favorites}) => {
 
   return `<nav class="main-navigation">
   <div class="main-navigation__items">
@@ -17,3 +18,27 @@ export const createMainMenuTemplate = ({watchlist, history, favorites}) => {
   <li><a href="#" class="sort__button">Sort by rating</a></li>
   </ul>`;
 };
+
+export default class MainMenu {
+  constructor(filters) {
+    this._element = null;
+
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createMainMenuTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

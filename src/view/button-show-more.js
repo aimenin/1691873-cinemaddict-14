@@ -1,17 +1,19 @@
 import {createElement} from '../utils/utils';
 
-// шаблон для главной секции сайта
-const createFilmsTemplate = () => {
-  return '<section class="films"></section>';
+// шаблон для кнопки
+const createButtonShowMoreTemplate = () => {
+  return `<button class='films-list__show-more'>
+    Show more
+  </button>`;
 };
 
-export default class Films {
+export default class ButtonShowMore {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmsTemplate();
+    return createButtonShowMoreTemplate();
   }
 
   getElement() {

@@ -24,6 +24,14 @@ const generateArray = (generationFunction) => {
   return arrayOfPeople;
 };
 
+let id = 0;
+
+const generateId = () => {
+  id++;
+
+  return id;
+};
+
 const generateDescription = () => {
   const descriptions = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -143,6 +151,7 @@ const generateDuration = () => {
 
 export const generateMovie = () => {
   return {
+    id: generateId(),
     name: generateName(),
     originalName: generateOriginalName(),
     posterUrl: generatePosters(),
