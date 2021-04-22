@@ -43,13 +43,13 @@ const cardClick = (movie) => {
     document.body.classList.remove('hide-overflow');
   };
 
-  function onEscKeyDown (e) {
+  const onEscKeyDown = (e) => {
     if (e.key == 'Escape' || e.key == 'Esc') {
       e.preventDefault();
       closePopup();
       document.removeEventListener('keydown', onEscKeyDown);
     }
-  }
+  };
 
   openPopup(popup);
 
