@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {generateComment} from './comment';
-import {getRandomInteger} from '../utils/utils';
+import {getRandomInteger} from '../utils/common';
 
 const generatePeoplesNames = () => {
   const names = [

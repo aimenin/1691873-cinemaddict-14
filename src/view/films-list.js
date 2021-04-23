@@ -1,4 +1,4 @@
-import {createElement} from '../utils/utils';
+import AbstractView from './abstract';
 
 // шаблон для списка фильмов
 const createFilmsListTemplate = () => {
@@ -9,24 +9,8 @@ const createFilmsListTemplate = () => {
   </section>`;
 };
 
-export default class FilmsList {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilmsList extends AbstractView {
   getTemplate() {
     return createFilmsListTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
