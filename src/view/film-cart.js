@@ -1,4 +1,4 @@
-import {createElement} from '../utils/utils';
+import AbstractView from './abstract';
 
 // шаблон для карточки фильма
 const createFilmCartTemplate = (movie, description) => {
@@ -23,27 +23,32 @@ const createFilmCartTemplate = (movie, description) => {
   </article>`;
 };
 
-export default class FilmCart {
+export default class FilmCart extends AbstractView {
   constructor(movie, description) {
-    this._element = null;
+    super();
 
     this._movie = movie;
     this._description = description;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCartTemplate(this._movie, this._description);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  _clickHandler(evt) {
+    evt.preventDefault();
+
+    if (!['film-card__poster', 'film-card__title', 'film-card__comments'].includes(evt.target.className)) {
+      return;
     }
 
-    return this._element;
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+
+    this.getElement().addEventListener('click', this._clickHandler);
   }
 }

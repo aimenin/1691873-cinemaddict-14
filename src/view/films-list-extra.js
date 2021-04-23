@@ -1,4 +1,4 @@
-import {createElement} from '../utils/utils';
+import AbstractView from './abstract';
 
 // шаблон для экстра блока(самые просматриваемые, самые прокаменчиные)
 const createFilmsListExtraTemplate = (blockName) => {
@@ -9,26 +9,14 @@ const createFilmsListExtraTemplate = (blockName) => {
   </section>`;
 };
 
-export default class FilmsListExtra {
+export default class FilmsListExtra extends AbstractView {
   constructor(blockName) {
-    this._element = null;
+    super();
 
     this._blockName = blockName;
   }
 
   getTemplate() {
     return createFilmsListExtraTemplate(this._blockName);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

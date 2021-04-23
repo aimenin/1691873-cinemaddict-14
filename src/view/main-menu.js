@@ -1,4 +1,4 @@
-import {createElement} from '../utils/utils';
+import AbstractView from './abstract';
 
 const createMainMenuTemplate = ({watchlist, history, favorites}) => {
 
@@ -19,26 +19,14 @@ const createMainMenuTemplate = ({watchlist, history, favorites}) => {
   </ul>`;
 };
 
-export default class MainMenu {
+export default class MainMenu extends AbstractView {
   constructor(filters) {
-    this._element = null;
+    super();
 
     this._filters = filters;
   }
 
   getTemplate() {
     return createMainMenuTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

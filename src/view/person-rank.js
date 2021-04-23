@@ -1,4 +1,4 @@
-import {createElement} from '../utils/utils';
+import AbstractView from './abstract';
 
 // шаблон для ранга пользователя
 const createPersonRankTemplate = (rank) => {
@@ -8,26 +8,14 @@ const createPersonRankTemplate = (rank) => {
   </section>`;
 };
 
-export default class PersonRank {
+export default class PersonRank extends AbstractView {
   constructor(rank) {
-    this._element = null;
+    super();
 
     this._rank = rank;
   }
 
   getTemplate() {
     return createPersonRankTemplate(this._rank);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
