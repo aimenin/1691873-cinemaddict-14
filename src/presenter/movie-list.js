@@ -95,7 +95,7 @@ export default class MovieList {
   _clearMoviesList(type) {
     Object
       .values(this._filmCartPresenter)
-      .forEach((presenter) => presenter.destroy());
+      .forEach((presenter) => presenter.forEach((presenterItem) => presenterItem.destroy()));
     this._filmCartPresenter = {};
 
     if (type == types.MAIN_LIST) {
@@ -158,9 +158,7 @@ export default class MovieList {
     }
 
     this._renderMainMenu();
-
     this._renderFilmsList();
-
     this._renderExtraBlocks();
   }
 }

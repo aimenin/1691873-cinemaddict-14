@@ -1,7 +1,7 @@
 import PersonRankView from './view/person-rank';
 import FooterStatisticView from './view/footer-statistic';
 import {generateMovie} from './mock/movie';
-import { generateFilters, getPersonRank } from './utils/movie';
+import {generateFilters, getPersonRank} from './utils/movie';
 import {RenderPosition, render} from './utils/render';
 import MoviesListPresenter from './presenter/movie-list';
 

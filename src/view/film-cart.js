@@ -40,22 +40,18 @@ export default class FilmCart extends AbstractView {
     evt.preventDefault();
 
     if (['film-card__poster', 'film-card__title', 'film-card__comments'].includes(evt.target.className)) {
-
       this._callback.click();
     }
 
     if (['watchlist'].includes(evt.target.dataset.type)) {
-
       this._callback.watchListClick();
     }
 
     if (['alreadyWatched'].includes(evt.target.dataset.type)) {
-
       this._callback.alreadyWatched();
     }
 
     if (['favorite'].includes(evt.target.dataset.type)) {
-
       this._callback.favorite();
     }
   }

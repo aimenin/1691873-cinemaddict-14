@@ -127,33 +127,24 @@ export default class Movie {
   }
 
   _handleWatchListPopupClick() {
-    this._changePopup = Object.assign(
-      {},
-      this._changePopup,
-      {
-        watchlist: !this._changePopup.watchlist,
-      },
-    );
+    this._changePopup = {
+      ...this._changePopup,
+      watchlist: !this._changePopup.watchlist,
+    };
   }
 
   _handleAlreadyWatchedPopupClick() {
-    this._changePopup = Object.assign(
-      {},
-      this._changePopup,
-      {
-        already_watched: !this._changePopup.already_watched,
-      },
-    );
+    this._changePopup = {
+      ...this._changePopup,
+      already_watched: !this._changePopup.already_watched,
+    };
   }
 
   _handleFavoritePopupClick() {
-    this._changePopup = Object.assign(
-      {},
-      this._changePopup,
-      {
-        favorite: !this._changePopup.favorite,
-      },
-    );
+    this._changePopup = {
+      ...this._changePopup,
+      favorite: !this._changePopup.favorite,
+    };
   }
 
   _handleWatchListClick() {
