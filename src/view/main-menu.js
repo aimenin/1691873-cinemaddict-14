@@ -2,7 +2,7 @@ import AbstractView from './abstract';
 
 const createMainMenuTemplate = ({watchlist, history, favorites}) => {
 
-  return `<nav class="main-navigation">
+  return `<div><nav class="main-navigation">
   <div class="main-navigation__items">
     <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
     <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchlist.length}</span></a>
@@ -16,7 +16,7 @@ const createMainMenuTemplate = ({watchlist, history, favorites}) => {
   <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
   <li><a href="#" class="sort__button">Sort by date</a></li>
   <li><a href="#" class="sort__button">Sort by rating</a></li>
-  </ul>`;
+  </ul></div>`;
 };
 
 export default class MainMenu extends AbstractView {

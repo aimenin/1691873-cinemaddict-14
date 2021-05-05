@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {generateComment} from './comment';
 import {getRandomInteger} from '../utils/common';
+import {nanoid} from 'nanoid';
 
 const generatePeoplesNames = () => {
   const names = [
@@ -22,14 +23,6 @@ const generateArray = (generationFunction) => {
   }
 
   return arrayOfPeople;
-};
-
-let id = 0;
-
-const generateId = () => {
-  id++;
-
-  return id;
 };
 
 const generateDescription = () => {
@@ -151,7 +144,7 @@ const generateDuration = () => {
 
 export const generateMovie = () => {
   return {
-    id: generateId(),
+    id: nanoid(),
     name: generateName(),
     originalName: generateOriginalName(),
     posterUrl: generatePosters(),

@@ -1,7 +1,7 @@
 import AbstractView from './abstract';
 
 const createFilmDetailsTemplate = (movie) => {
-  const {name, posterUrl, ageRating, originalName, rating, director, writers, actors, duration, releaseTime, countries, genres, description} = movie;
+  const {name, posterUrl, ageRating, originalName, rating, director, writers, actors, duration, releaseTime, countries, genres, description, user_details} = movie;
 
   const writersString = writers.join(', ');
   const actorsString = actors.join(', ');
@@ -70,14 +70,14 @@ const createFilmDetailsTemplate = (movie) => {
         </div>
   
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${user_details.watchlist ? 'checked' : null}>
+          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" data-type='watchlist'>Add to watchlist</label>
   
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-          <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${user_details.already_watched ? 'checked' : null}>
+          <label for="watched" class="film-details__control-label film-details__control-label--watched" data-type='alreadyWatched'>Already watched</label>
   
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${user_details.favorite ? 'checked' : null}>
+          <label for="favorite" class="film-details__control-label film-details__control-label--favorite" data-type='favorite'>Add to favorites</label>
         </section>
       </div>
   
@@ -182,6 +182,7 @@ export default class FilmDetails extends AbstractView {
     this._movie = movie;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
+    this._clickControl = this._clickControl.bind(this);
   }
 
   getTemplate() {
@@ -191,6 +192,37 @@ export default class FilmDetails extends AbstractView {
   _closeClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeClick();
+  }
+
+  _clickControl(evt) {
+    if (['watchlist'].includes(evt.target.dataset.type)) {
+      this._callback.watchlist();
+    }
+
+    if (['alreadyWatched'].includes(evt.target.dataset.type)) {
+      this._callback.alreadyWatched();
+    }
+
+    if (['favorite'].includes(evt.target.dataset.type)) {
+      this._callback.favorite();
+    }
+  }
+
+  setWatchListHandler(callback) {
+    this._callback.watchlist = callback;
+    this.getElement().querySelector('.film-details__controls').addEventListener('click', this._clickControl);
+  }
+
+  setAlreadyWatchedHandler(callback) {
+    this._callback.alreadyWatched = callback;
+
+    this.getElement().querySelector('.film-details__controls').addEventListener('click', this._clickControl);
+  }
+
+  setFavoriteHandler(callback) {
+    this._callback.favorite = callback;
+
+    this.getElement().querySelector('.film-details__controls').addEventListener('click', this._clickControl);
   }
 
   setCloseClickHandler(callback) {
