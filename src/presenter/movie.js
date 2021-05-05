@@ -148,42 +148,33 @@ export default class Movie {
   }
 
   _handleWatchListClick() {
-    this._changeData(Object.assign(
-      {},
-      this._movie,
-      {
-        user_details: {
-          ...this._movie.user_details,
-          watchlist: !this._movie.user_details.watchlist,
-        },
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        watchlist: !this._movie.user_details.watchlist,
       },
-    ));
+    });
   }
 
   _handleAlreadyWatchedClick() {
-    this._changeData(Object.assign(
-      {},
-      this._movie,
-      {
-        user_details: {
-          ...this._movie.user_details,
-          already_watched: !this._movie.user_details.already_watched,
-        },
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        already_watched: !this._movie.user_details.already_watched,
       },
-    ));
+    });
   }
 
   _handleFavoriteClick() {
-    this._changeData(Object.assign(
-      {},
-      this._movie,
-      {
-        user_details: {
-          ...this._movie.user_details,
-          favorite: !this._movie.user_details.favorite,
-        },
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        favorite: !this._movie.user_details.favorite,
       },
-    ));
+    });
   }
 
   destroy() {
