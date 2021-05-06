@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const generateFilters = (movies) => {
   const watchlist = movies.filter((movie) => {
     return movie.user_details.watchlist;
@@ -62,4 +64,12 @@ export const getMostCommentedMovies = (movies) => {
     return b.comments.length - a.comments.length;
   });
   return mostCommentedMovies;
+};
+
+export const sortDate = (movieA, movieB) => {
+  return dayjs(movieB.releaseTime).diff(dayjs(movieA.releaseTime));
+};
+
+export const sortRating = (movieA, movieB) => {
+  return movieB.rating - movieA.rating;
 };
