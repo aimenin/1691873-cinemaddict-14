@@ -1,6 +1,8 @@
 import AbstractView from './abstract';
+import {SortType} from '../const';
 
-const createMainMenuTemplate = ({watchlist, history, favorites}) => {
+const createMainMenuTemplate = (filters, sortType) => {
+  const {watchlist, history, favorites} = filters;
 
   return `<div><nav class="main-navigation">
   <div class="main-navigation__items">
@@ -13,20 +15,37 @@ const createMainMenuTemplate = ({watchlist, history, favorites}) => {
   </nav>
 
   <ul class="sort">
-  <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-  <li><a href="#" class="sort__button">Sort by date</a></li>
-  <li><a href="#" class="sort__button">Sort by rating</a></li>
+  <li><a href="#" class="sort__button ${sortType === SortType.DEFAULT ? 'sort__button--active' : null}" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
+  <li><a href="#" class="sort__button ${sortType === SortType.DATE ? 'sort__button--active' : null}" data-sort-type="${SortType.DATE}">Sort by date</a></li>
+  <li><a href="#" class="sort__button ${sortType === SortType.RATING ? 'sort__button--active' : null}" data-sort-type="${SortType.RATING}">Sort by rating</a></li>
   </ul></div>`;
 };
 
 export default class MainMenu extends AbstractView {
-  constructor(filters) {
+  constructor(filters, sortType) {
     super();
 
     this._filters = filters;
+    this._sortType = sortType;
+
+    this._sortTypeChangeHadler = this._sortTypeChangeHadler.bind(this);
+  }
+
+  _sortTypeChangeHadler(evt) {
+    if (evt.target.tagName !== 'A') {
+      return;
+    }
+
+    evt.preventDefault();
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().querySelector('.sort').addEventListener('click', this._sortTypeChangeHadler);
   }
 
   getTemplate() {
-    return createMainMenuTemplate(this._filters);
+    return createMainMenuTemplate(this._filters, this._sortType);
   }
 }
