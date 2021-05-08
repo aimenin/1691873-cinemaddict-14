@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common';
 
 const generateText = () => {
@@ -36,6 +37,7 @@ const generateAuthorName = () => {
 
 export const generateComment = () => {
   return {
+    id: nanoid(),
     text: generateText(),
     emotion: generateEmotion(),
     authorName: generateAuthorName(),
