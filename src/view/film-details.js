@@ -198,7 +198,7 @@ export default class FilmDetails extends Smart {
   constructor(movie) {
     super();
 
-    this._data = FilmDetails.parseMovieToData(movie);
+    this._movie = FilmDetails.parseMovieToData(movie);
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._clickControl = this._clickControl.bind(this);
@@ -210,7 +210,7 @@ export default class FilmDetails extends Smart {
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._data);
+    return createFilmDetailsTemplate(this._movie);
   }
 
   _closeClickHandler(evt) {
@@ -265,25 +265,29 @@ export default class FilmDetails extends Smart {
 
   _emojiClickHandler(evt) {
     evt.preventDefault();
-    if ([emojies.ANGRY].includes(evt.target.dataset.emoji)) {
-      this.updateData({
-        emotion: emotionImage.angry,
-      });
-    }
-    if ([emojies.PUKE].includes(evt.target.dataset.emoji)) {
-      this.updateData({
-        emotion: emotionImage.puke,
-      });
-    }
-    if ([emojies.SLEEPING].includes(evt.target.dataset.emoji)) {
-      this.updateData({
-        emotion: emotionImage.sleeping,
-      });
-    }
-    if ([emojies.SMILE].includes(evt.target.dataset.emoji)) {
-      this.updateData({
-        emotion: emotionImage.smile,
-      });
+    switch(evt.target.dataset.emoji) {
+      case emojies.ANGRY:
+        this.updateData({
+          emotion: emotionImage.angry,
+        });
+        break;
+      case emojies.PUKE:
+        this.updateData({
+          emotion: emotionImage.puke,
+        });
+        break;
+      case emojies.SLEEPING:
+        this.updateData({
+          emotion: emotionImage.sleeping,
+        });
+        break;
+      case emojies.SMILE:
+        if ([emojies.SMILE].includes(evt.target.dataset.emoji)) {
+          this.updateData({
+            emotion: emotionImage.smile,
+          });
+        }
+        break;
     }
   }
 
