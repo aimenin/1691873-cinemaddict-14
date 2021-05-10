@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common';
 
@@ -41,6 +40,6 @@ export const generateComment = () => {
     text: generateText(),
     emotion: generateEmotion(),
     authorName: generateAuthorName(),
-    date: dayjs().subtract(getRandomInteger(0, 2), 'day').subtract(getRandomInteger(0, 3), 'hour').format('YYYY/MM/DD HH:mm'),
+    date: new Date(getRandomInteger(2020, 2021), getRandomInteger(0, 11), getRandomInteger(0, 29)).toISOString(),
   };
 };

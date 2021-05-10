@@ -1,4 +1,9 @@
 import dayjs from 'dayjs';
+import objectSupport from 'dayjs/plugin/objectSupport';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(objectSupport);
+dayjs.extend(relativeTime);
 
 export const generateFilters = (movies) => {
   const watchlist = movies.filter((movie) => {
@@ -72,4 +77,16 @@ export const sortDate = (movieA, movieB) => {
 
 export const sortRating = (movieA, movieB) => {
   return movieB.rating - movieA.rating;
+};
+
+export const durationParse = (duration) => {
+  return dayjs({minute: duration}).format('h[h] mm[m]');
+};
+
+export const releaseTimeParse = (releaseTime) => {
+  return dayjs(releaseTime).format('DD-MMMM-YYYY');
+};
+
+export const generateHumanizeCommentDate = (date) => {
+  return dayjs().to(dayjs(date));
 };

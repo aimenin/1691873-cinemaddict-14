@@ -1,15 +1,19 @@
 import AbstractView from './abstract';
+import {durationParse} from '../utils/movie';
+import dayjs from 'dayjs';
 
 // шаблон для карточки фильма
 const createFilmCartTemplate = (movie, description) => {
-  const {name, rating, year, duration, genres, posterUrl, comments, user_details} = movie;
+  const {name, rating, duration, genres, posterUrl, comments, user_details, releaseTime} = movie;
+  const parsedDuration = durationParse(duration);
+  const year = dayjs(releaseTime).format('YYYY');
 
   return `<article class="film-card">
   <h3 class="film-card__title">${name}</h3>
   <p class="film-card__rating">${rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${year}</span>
-    <span class="film-card__duration">${duration}</span>
+    <span class="film-card__duration">${parsedDuration}</span>
     <span class="film-card__genre">${genres[0]}</span>
   </p>
   <img src="${posterUrl}" alt="" class="film-card__poster">
