@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import {generateComment} from './comment';
 import {getRandomInteger} from '../utils/common';
 import {nanoid} from 'nanoid';
@@ -131,17 +130,6 @@ const generateRating = () => {
   return getRandomInteger(10, 100) / 10;
 };
 
-const generateDuration = () => {
-  const hours = getRandomInteger(1, 4);
-  let minutes = getRandomInteger(1, 59);
-
-  if (minutes < 10) {
-    minutes = '0' + minutes;
-  }
-
-  return hours + 'h ' + minutes + 'm';
-};
-
 export const generateMovie = () => {
   return {
     id: nanoid(),
@@ -154,8 +142,8 @@ export const generateMovie = () => {
     director: generatePeoplesNames(),
     writers: generateArray(generatePeoplesNames),
     actors: generateArray(generatePeoplesNames),
-    releaseTime: dayjs().subtract(getRandomInteger(1, 10), 'year').subtract(getRandomInteger(1, 10), 'month').add(getRandomInteger(-10, 10), 'day').format('DD-MMMM-YYYY'),
-    duration: generateDuration(),
+    releaseTime: new Date(getRandomInteger(1980, 2021), getRandomInteger(0, 11), getRandomInteger(0, 29)).toISOString(),
+    duration: getRandomInteger(50, 200),
     countries: generateArray(generateCountry),
     genres: generateArray(generateGenre),
     ageRating: generateAgeRating(),
