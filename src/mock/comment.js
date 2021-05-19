@@ -37,7 +37,7 @@ const generateAuthorName = () => {
 export const generateComment = () => {
   return {
     id: nanoid(),
-    text: generateText(),
+    comment: generateText(),
     emotion: generateEmotion(),
     authorName: generateAuthorName(),
     date: new Date(getRandomInteger(2020, 2021), getRandomInteger(0, 11), getRandomInteger(0, 29)).toISOString(),
