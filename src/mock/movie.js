@@ -2,6 +2,22 @@ import {generateComment} from './comment';
 import {getRandomInteger} from '../utils/common';
 import {nanoid} from 'nanoid';
 
+export const comments = new Array(100).fill().map(generateComment);
+
+let commentsForMovies = [...comments];
+
+const getComment = () => {
+  const randomId = getRandomInteger(0, commentsForMovies.length - 1);
+  const result = commentsForMovies[randomId].id;
+
+  commentsForMovies = [
+    ...commentsForMovies.slice(0, randomId),
+    ...commentsForMovies.slice(randomId + 1),
+  ];
+
+  return result;
+};
+
 const generatePeoplesNames = () => {
   const names = [
     'Самэль Эль Джексон',
@@ -147,7 +163,7 @@ export const generateMovie = () => {
     countries: generateArray(generateCountry),
     genres: generateArray(generateGenre),
     ageRating: generateAgeRating(),
-    comments: new Array(getRandomInteger(0, 5)).fill().map(generateComment),
+    comments: new Array(getRandomInteger(0, 5)).fill().map(getComment),
     user_details: {
       watchlist: Boolean(getRandomInteger(0, 1)),
       already_watched: Boolean(getRandomInteger(0, 1)),

@@ -1,7 +1,8 @@
 import PopupExtraMoviesView from '../view/film-details';
 import FilmCartView from '../view/film-cart';
-import { render, RenderPosition, remove, replace } from '../utils/render';
-import { clipDescription } from '../utils/movie';
+import {render, RenderPosition, remove, replace} from '../utils/render';
+import {clipDescription} from '../utils/movie';
+import {MovieAction, UpdateType, CommentAction} from '../const';
 
 const Mode = {
   CART: 'CART',
@@ -9,9 +10,10 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(movieListContainer, changeData, changeMode) {
+  constructor(movieListContainer, changeData, changeMode, changeComment) {
     this._movieListContainer = movieListContainer;
     this._changeData = changeData;
+    this._changeComment = changeComment;
     this._changePopup = {};
     this.mode = Mode.CART;
     this._changeMode = changeMode;
@@ -26,12 +28,16 @@ export default class Movie {
     this._handleWatchListPopupClick = this._handleWatchListPopupClick.bind(this);
     this._handleAlreadyWatchedPopupClick = this._handleAlreadyWatchedPopupClick.bind(this);
     this._handleFavoritePopupClick = this._handleFavoritePopupClick.bind(this);
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
+    this._deleteCommentFromMovie = this._deleteCommentFromMovie.bind(this);
     this._openPopup = this._openPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
   }
 
-  init(movie) {
+  init(movie, comments) {
     this._movie = movie;
+    this._comments = comments;
 
     const prevCartFilmComponent = this._filmCartComponent;
     const prevCartPopupComponent = this._popupComponent;
@@ -39,7 +45,7 @@ export default class Movie {
     const description = clipDescription(movie.description);
 
     this._filmCartComponent = new FilmCartView(movie, description);
-    this._popupComponent = new PopupExtraMoviesView(movie);
+    this._popupComponent = new PopupExtraMoviesView(movie, this._comments);
 
     this._filmCartComponent.setClickHandler(() => {
       this._cardClick(movie);
@@ -83,6 +89,8 @@ export default class Movie {
     this._popupComponent.setWatchListHandler(this._handleWatchListPopupClick);
     this._popupComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedPopupClick);
     this._popupComponent.setFavoriteHandler(this._handleFavoritePopupClick);
+    this._popupComponent.setDeleteCommentHadler(this._handleDeleteCommentClick);
+    this._popupComponent.setSubmitHandler(this._handleAddComment);
     this._changeMode();
     document.body.appendChild(this._popupComponent.getElement());
     this.mode = Mode.POPUP;
@@ -92,21 +100,24 @@ export default class Movie {
     if (this._popupComponent.getElement().parentNode && document.body.contains(this._popupComponent.getElement())) {
       document.body.removeChild(this._popupComponent.getElement());
     }
-    this._changeData(Object.assign(
-      {},
-      this._movie,
-      {
-        user_details: {
-          ...this._changePopup,
+    this._changeData(
+      MovieAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      Object.assign(
+        {},
+        this._movie,
+        {
+          user_details: {
+            ...this._changePopup,
+          },
         },
-      },
-    ));
+      ));
     this.mode = Mode.CART;
     document.body.classList.remove('hide-overflow');
   }
 
   _cardClick(movie) {
-    this._popupComponent = new PopupExtraMoviesView(movie);
+    this._popupComponent = new PopupExtraMoviesView(this._movie, this._comments);
 
     const onEscKeyDown = (e) => {
       if (e.key == 'Escape' || e.key == 'Esc') {
@@ -148,33 +159,71 @@ export default class Movie {
   }
 
   _handleWatchListClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        watchlist: !this._movie.user_details.watchlist,
-      },
-    });
+    this._changeData(
+      MovieAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          watchlist: !this._movie.user_details.watchlist,
+        },
+      });
   }
 
   _handleAlreadyWatchedClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        already_watched: !this._movie.user_details.already_watched,
-      },
-    });
+    this._changeData(
+      MovieAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          already_watched: !this._movie.user_details.already_watched,
+        },
+      });
   }
 
   _handleFavoriteClick() {
-    this._changeData({
+    this._changeData(
+      MovieAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          favorite: !this._movie.user_details.favorite,
+        },
+      });
+  }
+
+  _handleDeleteCommentClick(commentId) {
+    this._changeComment(
+      CommentAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      commentId,
+    );
+    this._deleteCommentFromMovie(commentId);
+  }
+
+  _handleAddComment(comment) {
+    this._changeComment(
+      CommentAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      comment,
+    );
+  }
+
+  _deleteCommentFromMovie(commentId) {
+    const index = this._movie.comments.findIndex((comment) => comment === commentId);
+
+    this._movie = {
       ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        favorite: !this._movie.user_details.favorite,
-      },
-    });
+      comments: [
+        ...this._movie.comments.slice(0, index),
+        ...this._movie.comments.slice(index + 1),
+      ],
+    };
   }
 
   destroy() {
