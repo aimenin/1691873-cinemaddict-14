@@ -32,7 +32,6 @@ export default class MovieList {
     this._mainCount = MOVIES_PER_STEP;
     this._filmCartPresenter = {};
 
-    // this._handleMovieCartChange = this._handleMovieCartChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleCommentAction = this._handleCommentAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -83,27 +82,11 @@ export default class MovieList {
     return comments;
   }
 
-  // _sortMovie(sortType) {
-  //   switch (sortType) {
-  //     case SortType.DATE:
-  //       this._movies.sort(sortDate);
-  //       break;
-  //     case SortType.RATING:
-  //       this._movies.sort(sortRating);
-  //       break;
-  //     default:
-  //       this._movies = this._sourced.slice();
-  //   }
-
-  //   this._currentSortType = sortType;
-  // }
-
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
     }
 
-    // this._sortMovie(sortType);
     this._currentSortType = sortType;
     this._clearMoviesList();
     this._renderMovieList();
@@ -176,9 +159,6 @@ export default class MovieList {
   }
 
   _renderMovies(movies, container) {
-    // this._movies
-    //   .slice(from, to)
-    //   .forEach((movie) => this._renderMovie(container, movie));
     movies.forEach((movie) => this._renderMovie(container, movie));
   }
 
@@ -192,20 +172,7 @@ export default class MovieList {
       });
   }
 
-  // _handleMovieCartChange(updatedMovie) {
-  //   this._movies = updateItem(this._movies, updatedMovie);
-  //   this._sourced = updateItem(this._sourced, updatedMovie);
-  //   Здесь будем вызывать обновление модели
-  //   this._filmCartPresenter[updatedMovie.id].forEach((presenter) => {
-  //     presenter.init(updatedMovie);
-  //   });
-  // }
-
   _handleViewAction(actionType, updateType, update) {
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
     switch (actionType) {
       case MovieAction.UPDATE_MOVIE:
         this._moviesModel.updateMovie(updateType, update);
@@ -233,7 +200,6 @@ export default class MovieList {
         this._renderMovieList();
         break;
       case UpdateType.MAJOR:
-        // обновит весь презентер
         this._clearMoviesList({resetRenderedMovieCount: true, resetSortType: true});
         this._renderMovieList();
         break;
@@ -278,7 +244,9 @@ export default class MovieList {
   }
 
   _renderMovieList() {
-    if (this._getMovies().length === 0) {
+    const movies = this._getMovies();
+
+    if (movies.length === 0) {
       this._renderNoMovies();
       return;
     }
@@ -286,10 +254,10 @@ export default class MovieList {
     this._renderSort();
     const filmsListContainerElement = this._filmsListComponent.getElement().querySelector('.films-list__container');
 
-    const movieCount = this._getMovies().length;
-    const movies = this._getMovies().slice(0, Math.min(movieCount, this._mainCount));
+    const movieCount = movies.length;
+    const newMovies = movies.slice(0, Math.min(movieCount, this._mainCount));
 
-    this._renderMovies(movies, filmsListContainerElement);
+    this._renderMovies(newMovies, filmsListContainerElement);
 
     if (movieCount > MOVIES_PER_STEP) {
       this._renderLoadMoreButton(filmsListContainerElement);

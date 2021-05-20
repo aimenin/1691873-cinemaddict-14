@@ -257,18 +257,20 @@ export default class FilmDetails extends Smart {
   }
 
   _submitHandler(evt) {
-    if (evt.ctrlKey && evt.key == 'Enter') {
-      this.updateData({
-        localCommentId: nanoid(),
-      }, true);
-      this.addComment(FilmDetails.parseMovieToLocalComment(this._movie), true);
-      this._callback.submit(FilmDetails.parseMovieToLocalComment(this._movie));
-      this.updateData({
-        comment: '',
-        emotion: '',
-        emotionImg: '',
-      });
+    if (!evt.ctrlKey && !evt.key == 'Enter') {
+      return;
     }
+
+    this.updateData({
+      localCommentId: nanoid(),
+    }, true);
+    this.addComment(FilmDetails.parseMovieToLocalComment(this._movie), true);
+    this._callback.submit(FilmDetails.parseMovieToLocalComment(this._movie));
+    this.updateData({
+      comment: '',
+      emotion: '',
+      emotionImg: '',
+    });
   }
 
   _emojiClickHandler(evt) {
