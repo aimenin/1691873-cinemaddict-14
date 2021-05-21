@@ -14,7 +14,6 @@ export const filterDueMovies = (movies, dateFrom, dateTo) => {
       dayjs(movie.user_details.watching_date).isBetween(dateFrom, dateTo) ||
       dayjs(movie.user_details.watching_date).isSame(dateTo)
     ) {
-      console.log('true');
       return true;
     } else {
       return false;
