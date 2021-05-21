@@ -146,6 +146,14 @@ const generateRating = () => {
   return getRandomInteger(10, 100) / 10;
 };
 
+let alreadyWatched = false;
+
+const generateAlreadyWatched = () => {
+  alreadyWatched = Boolean(getRandomInteger(0, 1));
+
+  return alreadyWatched;
+};
+
 export const generateMovie = () => {
   return {
     id: nanoid(),
@@ -166,7 +174,8 @@ export const generateMovie = () => {
     comments: new Array(getRandomInteger(0, 5)).fill().map(getComment),
     user_details: {
       watchlist: Boolean(getRandomInteger(0, 1)),
-      already_watched: Boolean(getRandomInteger(0, 1)),
+      already_watched: generateAlreadyWatched(),
+      watching_date: alreadyWatched ? new Date(getRandomInteger(2021, 2021), getRandomInteger(0, 11), getRandomInteger(0, 29)) : '',
       favorite: Boolean(getRandomInteger(0, 1)),
     },
   };

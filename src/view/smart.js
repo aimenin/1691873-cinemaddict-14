@@ -10,9 +10,9 @@ export default class Smart extends Abstract {
       return;
     }
 
-    this._movie = Object.assign(
+    this._data = Object.assign(
       {},
-      this._movie,
+      this._data,
       update,
     );
 
