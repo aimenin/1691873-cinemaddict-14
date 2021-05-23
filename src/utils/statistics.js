@@ -9,15 +9,8 @@ export const filterWatchedMovies = (movies) => {
 
 export const filterDueMovies = (movies, dateFrom, dateTo) => {
   return movies.filter((movie) => {
-    if (
-      dayjs(movie.user_details.watching_date).isSame(dateFrom) ||
-      dayjs(movie.user_details.watching_date).isBetween(dateFrom, dateTo) ||
-      dayjs(movie.user_details.watching_date).isSame(dateTo)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    const watchingDate = dayjs(movie.user_details.watching_date);
+    return watchingDate.isSame(dateFrom) || watchingDate.isBetween(dateFrom, dateTo) || watchingDate.isSame(dateTo);
   });
 };
 
@@ -62,7 +55,7 @@ export const mostLikelyGenre = (genres) => {
   return biggestGenre;
 };
 
-export const genresArray = (genres) => {
+export const generateGenresArray = (genres) => {
   const genresPair = [];
 
   for (const [key, value] of Object.entries(genres)) {
@@ -78,7 +71,7 @@ export const genresArray = (genres) => {
 };
 
 export const genresArrayTitle = (genres) => {
-  const genresPair = genresArray(genres);
+  const genresPair = generateGenresArray(genres);
 
   const genresTitles = [];
 
@@ -90,7 +83,7 @@ export const genresArrayTitle = (genres) => {
 };
 
 export const genresArrayCount = (genres) => {
-  const genresPair = genresArray(genres);
+  const genresPair = generateGenresArray(genres);
 
   const genresCounts = [];
 
