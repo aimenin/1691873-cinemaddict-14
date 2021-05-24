@@ -32,3 +32,16 @@ export const emotions = {
   PUKE: 'puke',
   ANGRY: 'angry',
 };
+
+export const MenuItem = {
+  MOVIES: 'MOVIES',
+  STATISTIC: 'STATISTIC',
+};
+
+export const DateInterval = {
+  YEAR: 'year',
+  ALLTIME: 'all-time',
+  WEEK: 'week',
+  DAY: 'today',
+  MONTH: 'month',
+};

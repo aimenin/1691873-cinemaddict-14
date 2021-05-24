@@ -1,13 +1,14 @@
-import {FilterType, UpdateType} from '../const';
+import {FilterType, UpdateType, MenuItem} from '../const';
 import {filter} from '../utils/filter.js';
 import {render, RenderPosition, remove, replace} from '../utils/render';
 import MainMenuView from '../view/main-menu';
 
 export default class Filter {
-  constructor(filterContainer, filterModel, moviesModel) {
+  constructor(filterContainer, filterModel, moviesModel, menuFunction) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
+    this._menuFunction = menuFunction;
 
     this._mainMenuComponent = null;
 
@@ -24,6 +25,7 @@ export default class Filter {
 
     this._mainMenuComponent = new MainMenuView(filters, this._filterModel.getFilter());
     this._mainMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._mainMenuComponent.setStatsClickHandler(this._menuFunction);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._mainMenuComponent, RenderPosition.AFTERBEGIN);
@@ -39,11 +41,11 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
+    if (this._filterModel.getFilter().activeFilter === filterType) {
       return;
     }
 
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType, MenuItem.MOVIES);
   }
 
   _getFilters() {

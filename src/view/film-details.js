@@ -170,7 +170,7 @@ export default class FilmDetails extends Smart {
   constructor(movie, comments) {
     super();
 
-    this._movie = FilmDetails.parseMovieToData(movie);
+    this._data = FilmDetails.parseMovieToData(movie);
     this._comments = comments;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -185,7 +185,7 @@ export default class FilmDetails extends Smart {
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._movie, this._comments);
+    return createFilmDetailsTemplate(this._data, this._comments);
   }
 
   _closeClickHandler(evt) {
@@ -264,8 +264,8 @@ export default class FilmDetails extends Smart {
     this.updateData({
       localCommentId: nanoid(),
     }, true);
-    this.addComment(FilmDetails.parseMovieToLocalComment(this._movie), true);
-    this._callback.submit(FilmDetails.parseMovieToLocalComment(this._movie));
+    this.addComment(FilmDetails.parseMovieToLocalComment(this._data), true);
+    this._callback.submit(FilmDetails.parseMovieToLocalComment(this._data));
     this.updateData({
       comment: '',
       emotion: '',

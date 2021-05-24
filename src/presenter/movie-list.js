@@ -39,21 +39,32 @@ export default class MovieList {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._filterComments = this._filterComments.bind(this);
     this._handleCommentEvent = this._handleCommentEvent.bind(this);
+  }
+
+  init() {
+    render(this._movieListContainer, this._filmsComponent, RenderPosition.BEFOREEND);
+    render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
     this._commentsModel.addObserver(this._handleCommentEvent);
-  }
-
-  init() {
-    render(this._movieListContainer, this._filmsComponent, RenderPosition.AFTERBEGIN);
-    render(this._filmsComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
 
     this._renderMovieList();
   }
 
+  destroy() {
+    this._clearMoviesList({resetRenderedMovieCount: true, resetSortType: true});
+
+    remove(this._filmsComponent);
+    remove(this._filmsListComponent);
+
+    this._moviesModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this._commentsModel.removeObserver(this._handleCommentEvent);
+  }
+
   _getMovies() {
-    const filterType = this._filterModel.getFilter();
+    const filterType = this._filterModel.getFilter().activeFilter;
     const movies = this._moviesModel.getMovies();
     const filteredMovies = filter[filterType](movies);
 
