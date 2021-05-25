@@ -44,7 +44,7 @@ export const getPersonRank = (watchlist) => {
     rank = 'Novice';
   }
 
-  if (numberOfWatchlist > 11 && numberOfWatchlist <= 20) {
+  if (numberOfWatchlist > 10 && numberOfWatchlist <= 20) {
     rank = 'Fan';
   }
 

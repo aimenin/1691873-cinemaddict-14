@@ -7,10 +7,20 @@ const createFilmCartTemplate = (movie, description) => {
   const {name, rating, duration, genres, posterUrl, comments, user_details, releaseTime} = movie;
   const parsedDuration = durationParse(duration);
   const year = dayjs(releaseTime).format('YYYY');
+  let ratingColor = '';
+  if (rating > 7) {
+    ratingColor = 'good';
+  }
+  if (rating > 4 && rating <= 7) {
+    ratingColor = 'average';
+  }
+  if (rating <= 4) {
+    ratingColor = 'poor';
+  }
 
   return `<article class="film-card">
   <h3 class="film-card__title">${name}</h3>
-  <p class="film-card__rating">${rating}</p>
+  <p class="film-card__rating film-card__rating--${ratingColor}">${rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${year}</span>
     <span class="film-card__duration">${parsedDuration}</span>

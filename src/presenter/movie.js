@@ -3,6 +3,7 @@ import FilmCartView from '../view/film-cart';
 import {render, RenderPosition, remove, replace} from '../utils/render';
 import {clipDescription} from '../utils/movie';
 import {MovieAction, UpdateType, CommentAction} from '../const';
+import CommentsModel from '../model/comments';
 
 const Mode = {
   CART: 'CART',
@@ -10,13 +11,14 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(movieListContainer, changeData, changeMode, changeComment) {
+  constructor(movieListContainer, changeData, changeMode, api) {
     this._movieListContainer = movieListContainer;
     this._changeData = changeData;
-    this._changeComment = changeComment;
     this._changePopup = {};
     this.mode = Mode.CART;
     this._changeMode = changeMode;
+    this._api = api;
+    this._commentsModel = new CommentsModel();
 
     this._popupComponent = null;
     this._filmCartComponent = null;
@@ -33,49 +35,74 @@ export default class Movie {
     this._deleteCommentFromMovie = this._deleteCommentFromMovie.bind(this);
     this._openPopup = this._openPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
+    this._handleCommentAction = this._handleCommentAction.bind(this);
+    this._handleCommentEvent = this._handleCommentEvent.bind(this);
   }
 
-  init(movie, comments) {
-    this._movie = movie;
-    this._comments = comments;
+  init(movie) {
+    this._commentsModel.addObserver(this._handleCommentEvent);
 
-    const prevCartFilmComponent = this._filmCartComponent;
-    const prevCartPopupComponent = this._popupComponent;
+    this._api.getComments(movie)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
 
-    const description = clipDescription(movie.description);
+        this._movie = movie;
+        this._comments = comments;
 
-    this._filmCartComponent = new FilmCartView(movie, description);
-    this._popupComponent = new PopupExtraMoviesView(movie, this._comments);
+        const prevCartFilmComponent = this._filmCartComponent;
+        const prevCartPopupComponent = this._popupComponent;
 
-    this._filmCartComponent.setClickHandler(() => {
-      this._cardClick(movie);
-    });
+        const description = clipDescription(movie.description);
 
-    this._filmCartComponent.setWatchListHandler(this._handleWatchListClick);
-    this._filmCartComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
-    this._filmCartComponent.setFavoriteHandler(this._handleFavoriteClick);
+        this._filmCartComponent = new FilmCartView(movie, description);
+        this._popupComponent = new PopupExtraMoviesView(movie, this._comments);
 
-    if (prevCartFilmComponent === null || prevCartPopupComponent == null) {
-      render(this._movieListContainer, this._filmCartComponent, RenderPosition.BEFOREEND);
-      return;
-    }
+        this._filmCartComponent.setClickHandler(() => {
+          this._cardClick(movie);
+        });
 
-    if (this.mode == Mode.CART) {
-      replace(this._filmCartComponent, prevCartFilmComponent);
-    }
+        this._filmCartComponent.setWatchListHandler(this._handleWatchListClick);
+        this._filmCartComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
+        this._filmCartComponent.setFavoriteHandler(this._handleFavoriteClick);
 
-    if (this.mode == Mode.POPUP) {
-      replace(this._filmCartComponent, prevCartFilmComponent);
-      remove(this._popupComponent);
-    }
+        if (prevCartFilmComponent === null || prevCartPopupComponent == null) {
+          render(this._movieListContainer, this._filmCartComponent, RenderPosition.BEFOREEND);
+          return;
+        }
 
-    remove(prevCartPopupComponent);
-    remove(prevCartFilmComponent);
+        if (this.mode == Mode.CART) {
+          replace(this._filmCartComponent, prevCartFilmComponent);
+        }
+
+        if (this.mode == Mode.POPUP) {
+          replace(this._filmCartComponent, prevCartFilmComponent);
+          remove(this._popupComponent);
+        }
+
+        remove(prevCartPopupComponent);
+        remove(prevCartFilmComponent);
+      })
+      .catch(() => {
+        this._commentsModel.setComments([]);
+      });
   }
 
   resetView() {
     if (this.mode !== Mode.CART) {
       this._closePopup();
+    }
+  }
+
+  _handleCommentEvent(updateType) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        break;
+      case UpdateType.MINOR:
+        // minor
+        break;
+      case UpdateType.MAJOR:
+        // обновит весь презентер
+        break;
     }
   }
 
@@ -85,6 +112,7 @@ export default class Movie {
       watchlist: movie.user_details.watchlist,
       already_watched: movie.user_details.already_watched,
       favorite: movie.user_details.favorite,
+      watching_date: movie.user_details.watching_date,
     };
     this._popupComponent.setWatchListHandler(this._handleWatchListPopupClick);
     this._popupComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedPopupClick);
@@ -197,8 +225,19 @@ export default class Movie {
       });
   }
 
+  _handleCommentAction(actionType, updateType, update) {
+    switch (actionType) {
+      case CommentAction.DELETE_COMMENT:
+        this._commentsModel.deleteComment(updateType, update);
+        break;
+      case CommentAction.ADD_COMMENT:
+        this._commentsModel.addComment(updateType, update);
+        break;
+    }
+  }
+
   _handleDeleteCommentClick(commentId) {
-    this._changeComment(
+    this._handleCommentAction(
       CommentAction.DELETE_COMMENT,
       UpdateType.PATCH,
       commentId,
@@ -207,7 +246,7 @@ export default class Movie {
   }
 
   _handleAddComment(comment) {
-    this._changeComment(
+    this._handleCommentAction(
       CommentAction.ADD_COMMENT,
       UpdateType.PATCH,
       comment,
@@ -227,6 +266,7 @@ export default class Movie {
   }
 
   destroy() {
+    this._commentsModel.removeObserver(this._handleCommentEvent);
     remove(this._filmCartComponent);
   }
 }
