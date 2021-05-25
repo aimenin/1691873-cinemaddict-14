@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {durationParse} from '../utils/movie';
+import {durationParse, generateRatingColor} from '../utils/movie';
 import dayjs from 'dayjs';
 
 // шаблон для карточки фильма
@@ -7,16 +7,7 @@ const createFilmCartTemplate = (movie, description) => {
   const {name, rating, duration, genres, posterUrl, comments, user_details, releaseTime} = movie;
   const parsedDuration = durationParse(duration);
   const year = dayjs(releaseTime).format('YYYY');
-  let ratingColor = '';
-  if (rating > 7) {
-    ratingColor = 'good';
-  }
-  if (rating > 4 && rating <= 7) {
-    ratingColor = 'average';
-  }
-  if (rating <= 4) {
-    ratingColor = 'poor';
-  }
+  const ratingColor = generateRatingColor(rating);
 
   return `<article class="film-card">
   <h3 class="film-card__title">${name}</h3>

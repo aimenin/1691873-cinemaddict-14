@@ -20,8 +20,8 @@ const moviesModel = new MoviesModel();
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.MOVIES:
-      remove(statisticComponent);
       moviesPresenter.init();
+      remove(statisticComponent);
       break;
     case MenuItem.STATISTIC:
       moviesPresenter.destroy();

@@ -90,3 +90,19 @@ export const releaseTimeParse = (releaseTime) => {
 export const generateHumanizeCommentDate = (date) => {
   return dayjs().to(dayjs(date));
 };
+
+export const generateRatingColor = (rating) => {
+  let ratingColor = '';
+
+  if (rating > 7) {
+    ratingColor = 'good';
+  }
+  if (rating > 4 && rating <= 7) {
+    ratingColor = 'average';
+  }
+  if (rating <= 4) {
+    ratingColor = 'poor';
+  }
+
+  return ratingColor;
+};
