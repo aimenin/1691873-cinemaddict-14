@@ -252,7 +252,6 @@ export default class FilmDetails extends Smart {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
-    // const newComments = this._comments.filter((comment) => comment.id !== evt.target.id);
     this._callback.deleteClick(evt.target.dataset.comment);
   }
 
