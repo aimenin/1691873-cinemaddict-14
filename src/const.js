@@ -17,6 +17,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const FilterType = {
@@ -45,3 +46,6 @@ export const DateInterval = {
   DAY: 'today',
   MONTH: 'month',
 };
+
+export const AUTHORIZATION = 'Basic uKRVlz698vaAyzLOG';
+export const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';

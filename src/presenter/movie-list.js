@@ -1,4 +1,5 @@
 import SortView from '../view/sort';
+import LoadingView from '../view/loading';
 import FilmsListExtraView from '../view/films-list-extra';
 import NoMoviesView from '../view/no-movies';
 import FilmsView from '../view/films';
@@ -7,38 +8,37 @@ import ButtonShowMore from '../view/button-show-more';
 import MoviePresenter from './movie';
 import {getMostCommentedMovies, getTopRatedMovies, sortDate, sortRating} from '../utils/movie';
 import {render, RenderPosition, remove} from '../utils/render';
-import {SortType, UpdateType, MovieAction, CommentAction} from '../const';
+import {SortType, UpdateType, MovieAction} from '../const';
 import {filter} from '../utils/filter';
 
 const EXTRA_COUNT = 2;
 const MOVIES_PER_STEP = 5;
 
 export default class MovieList {
-  constructor(movieListComponent, moviesModel, filterModel, commentsModel) {
+  constructor(movieListComponent, moviesModel, filterModel, api) {
+    this._api = api;
     this._movieListContainer = movieListComponent;
     this._currentSortType = SortType.DEFAULT;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
-    this._commentsModel = commentsModel;
 
     this._noMoviesComponent = new NoMoviesView();
     this._filmsComponent = new FilmsView();
     this._filmsListComponent = new FilmsListView();
+    this._loadingComponent = new LoadingView();
     this._loadMoreButton = null;
     this._topRatedComponent = null;
     this._mostCommentedComponent = null;
     this._sortComponent = null;
 
     this._mainCount = MOVIES_PER_STEP;
+    this._isLoading = true;
     this._filmCartPresenter = {};
 
     this._handleViewAction = this._handleViewAction.bind(this);
-    this._handleCommentAction = this._handleCommentAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._filterComments = this._filterComments.bind(this);
-    this._handleCommentEvent = this._handleCommentEvent.bind(this);
   }
 
   init() {
@@ -47,7 +47,6 @@ export default class MovieList {
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleCommentEvent);
 
     this._renderMovieList();
   }
@@ -60,7 +59,6 @@ export default class MovieList {
 
     this._moviesModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
-    this._commentsModel.removeObserver(this._handleCommentEvent);
   }
 
   _getMovies() {
@@ -76,21 +74,6 @@ export default class MovieList {
     }
 
     return filteredMovies;
-  }
-
-  _filterComments(movie) {
-    const allComments = this._commentsModel.getComments();
-
-    const movieCommentsIDs = movie.comments;
-
-    const comments = movieCommentsIDs.map((id) => {
-      const comment = allComments.find((globalComment) => globalComment.id === id);
-      if (comment !== undefined) {
-        return comment;
-      }
-    });
-
-    return comments;
   }
 
   _handleSortTypeChange(sortType) {
@@ -115,7 +98,7 @@ export default class MovieList {
   }
 
   _renderNoMovies() {
-    render(this._filmsComponent, this._noMoviesComponent(), RenderPosition.BEFOREEND);
+    render(this._filmsComponent, this._noMoviesComponent, RenderPosition.BEFOREEND);
   }
 
   _renderLoadMoreButton(container) {
@@ -137,9 +120,8 @@ export default class MovieList {
   }
 
   _renderMovie(container, movie) {
-    const comments = this._filterComments(movie);
-    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._handleCommentAction);
-    moviePresenter.init(movie, comments);
+    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._api);
+    moviePresenter.init(movie);
     if (movie.id in this._filmCartPresenter) {
       this._filmCartPresenter[movie.id].push(moviePresenter);
     } else {
@@ -160,6 +142,7 @@ export default class MovieList {
     }
 
     remove(this._loadMoreButton);
+    remove(this._loadingComponent);
     remove(this._sortComponent);
     remove(this._topRatedComponent);
     remove(this._mostCommentedComponent);
@@ -186,18 +169,9 @@ export default class MovieList {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case MovieAction.UPDATE_MOVIE:
-        this._moviesModel.updateMovie(updateType, update);
-    }
-  }
-
-  _handleCommentAction(actionType, updateType, update) {
-    switch (actionType) {
-      case CommentAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
-        break;
-      case CommentAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
-        break;
+        this._api.updateMovie(update).then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+        });
     }
   }
 
@@ -214,18 +188,10 @@ export default class MovieList {
         this._clearMoviesList({resetRenderedMovieCount: true, resetSortType: true});
         this._renderMovieList();
         break;
-    }
-  }
-
-  _handleCommentEvent(updateType) {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        break;
-      case UpdateType.MINOR:
-        // minor
-        break;
-      case UpdateType.MAJOR:
-        // обновит весь презентер
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderMovieList();
         break;
     }
   }
@@ -254,7 +220,16 @@ export default class MovieList {
     }
   }
 
+  _renderLoading() {
+    render(this._filmsComponent, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _renderMovieList() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const movies = this._getMovies();
 
     if (movies.length === 0) {

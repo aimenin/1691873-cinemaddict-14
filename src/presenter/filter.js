@@ -41,7 +41,7 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter().activeFilter === filterType) {
+    if (this._filterModel.getFilter().activeFilter === filterType && this._filterModel.getFilter().activeMenuPoint !== MenuItem.STATISTIC) {
       return;
     }
 

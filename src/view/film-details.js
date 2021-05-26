@@ -81,8 +81,8 @@ const createFilmDetailsTemplate = (movie, comments) => {
                 <td class="film-details__cell">${parsedDuration}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${countries.length > 1 ? 'Countries' : 'Country'}</td>
-                ${countries.map((element) => { return `<td class="film-details__cell">${element}</td>`;}).join('')}
+                <td class="film-details__term">Country</td>
+                ${countries}
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${genres.length > 1 ? 'Genres' : 'Genre'}</td>
