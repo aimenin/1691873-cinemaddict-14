@@ -1,7 +1,6 @@
 import Smart from './smart';
 import {durationParse, generateHumanizeCommentDate} from '../utils/movie';
 import dayjs from 'dayjs';
-import {nanoid} from 'nanoid';
 import {emotions} from '../const';
 import he from 'he';
 
@@ -27,7 +26,7 @@ const emotionImage = {
 };
 
 const createFilmDetailsTemplate = (movie, comments) => {
-  const {name, posterUrl, ageRating, originalName, rating, director, writers, actors, duration, releaseTime, countries, genres, description, user_details, comment} = movie;
+  const {name, posterUrl, ageRating, originalName, rating, director, writers, actors, duration, releaseTime, countries, genres, description, user_details, comment, isDeleting, deletingCommentId} = movie;
   const parsedDuration = durationParse(duration);
   const parsedReleaseTime = dayjs(releaseTime).format('DD-MMMM-YYYY');
 
@@ -115,7 +114,7 @@ const createFilmDetailsTemplate = (movie, comments) => {
   
           <ul class="film-details__comments-list">
             ${comments.map((comment) => {
-    return `<li class="film-details__comment">
+    return `<li class="film-details__comment" id=${comment.id}>
               <span class="film-details__comment-emoji">
                 ${emotionImage[comment.emotion]}
               </span>
@@ -124,7 +123,7 @@ const createFilmDetailsTemplate = (movie, comments) => {
                 <p class="film-details__comment-info">
                   <span class="film-details__comment-author">${comment.authorName}</span>
                   <span class="film-details__comment-day">${generateHumanizeCommentDate(comment.date)}</span>
-                  <button class="film-details__comment-delete" id=${comment.id}>Delete</button>
+                  <button class="film-details__comment-delete" data-comment=${comment.id} ${(isDeleting && deletingCommentId == comment.id) ? 'disabled' : ''}>${(isDeleting && deletingCommentId == comment.id) ? 'Deleting...' : 'Delete'}</button>
                 </p>
               </div>
             </li>`;
@@ -165,6 +164,8 @@ const createFilmDetailsTemplate = (movie, comments) => {
     </form>
   </section>`;
 };
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export default class FilmDetails extends Smart {
   constructor(movie, comments) {
@@ -251,26 +252,19 @@ export default class FilmDetails extends Smart {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(evt.target.id);
-    const comment = this._comments.find((comment) => comment.id === evt.target.id);
-    this.updateComments(comment);
+    // const newComments = this._comments.filter((comment) => comment.id !== evt.target.id);
+    this._callback.deleteClick(evt.target.dataset.comment);
   }
 
   _submitHandler(evt) {
-    if (!evt.ctrlKey && !evt.key == 'Enter') {
-      return;
+    if (evt.ctrlKey && evt.key == 'Enter' && !this._data.isSubmiting) {
+      this._callback.submit(FilmDetails.parseMovieToLocalComment(this._data), this._data.id);
+      this.updateData({
+        comment: '',
+        emotion: '',
+        emotionImg: '',
+      });
     }
-
-    this.updateData({
-      localCommentId: nanoid(),
-    }, true);
-    this.addComment(FilmDetails.parseMovieToLocalComment(this._data), true);
-    this._callback.submit(FilmDetails.parseMovieToLocalComment(this._data));
-    this.updateData({
-      comment: '',
-      emotion: '',
-      emotionImg: '',
-    });
   }
 
   _emojiClickHandler(evt) {
@@ -315,15 +309,35 @@ export default class FilmDetails extends Smart {
       {},
       movie,
       localComment,
+      {
+        isDeleting: false,
+        deletingCommentId: '',
+        isSubmiting: false,
+      },
     );
   }
 
   static parseMovieToLocalComment(movie) {
     return {
-      id: movie.localCommentId,
       comment: movie.comment,
       emotion: movie.emotion,
     };
+  }
+
+  shakeForm(callback) {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = '';
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(callback, id) {
+    document.getElementById(id).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = '';
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   restoreHandlers() {
