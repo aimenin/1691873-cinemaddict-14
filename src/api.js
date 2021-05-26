@@ -33,13 +33,25 @@ export default class Api {
 
   addComment(comment, movie) {
     return this._load({
-      url: `comments/${movie.id}`,
+      url: `comments/${movie}`,
       method: Method.POST,
       body: JSON.stringify(CommentsModel.adaptToServer(comment)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON())
-      .then(CommentsModel.adaptToClient);
+      .then(Api.toJSON)
+      .then((response) => {
+        return {
+          comments: response.comments.map((comment) => CommentsModel.adaptToClient(comment)),
+          movie: MoviesModel.adaptToClient(response.movie),
+        };
+      });
+  }
+
+  deleteComment(comment) {
+    return this._load({
+      url: `comments/${comment}`,
+      method: Method.DELETE,
+    });
   }
 
   updateMovie(movie) {

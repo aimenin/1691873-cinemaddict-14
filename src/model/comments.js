@@ -21,10 +21,9 @@ export default class Comments extends Observer {
   }
 
   addComment(updateType, update) {
-    const newComments = this._comments.slice();
-    newComments.push(update);
+    delete update.authorName;
 
-    this._comments = newComments.slice();
+    this._comments = Object.values(update);
 
     this._notify(updateType, update);
   }
@@ -47,9 +46,6 @@ export default class Comments extends Observer {
     const adaptedComment = Object.assign(
       {},
       comment,
-      {
-        author: comment.authorName,
-      },
     );
 
     delete adaptedComment.authorName;

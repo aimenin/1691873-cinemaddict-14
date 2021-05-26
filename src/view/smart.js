@@ -23,7 +23,7 @@ export default class Smart extends Abstract {
     this.updateElement();
   }
 
-  updateComments(update, justDataUpdating) {
+  deleteComment(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -42,14 +42,12 @@ export default class Smart extends Abstract {
     this.updateElement();
   }
 
-  addComment(update, justDataUpdating) {
+  updateComment(update, justDataUpdating) {
     if (!update) {
       return;
     }
 
-    const newComments = this._comments.slice();
-    newComments.push(update);
-    this._comments = newComments.slice();
+    this._comments = update.slice();
 
     if (justDataUpdating) {
       return;

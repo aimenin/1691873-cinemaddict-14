@@ -96,12 +96,7 @@ export default class Movie {
   _handleCommentEvent(updateType) {
     switch (updateType) {
       case UpdateType.PATCH:
-        break;
-      case UpdateType.MINOR:
-        // minor
-        break;
-      case UpdateType.MAJOR:
-        // обновит весь презентер
+        this._popupComponent.updateComment(this._commentsModel.getComments());
         break;
     }
   }
@@ -228,10 +223,26 @@ export default class Movie {
   _handleCommentAction(actionType, updateType, update) {
     switch (actionType) {
       case CommentAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
+        this._popupComponent.updateData({isDeleting: true, deletingCommentId: update});
+        this._api.deleteComment(update)
+          .then(() => {
+            this._commentsModel.deleteComment(updateType, update);
+            this._popupComponent.updateData({isDeleting: false, deletingCommentId: ''});
+          })
+          .catch(() => {
+            this._popupComponent.shakeComment(this._popupComponent.updateData({isDeleting: false, deletingCommentId: ''}), update);
+          });
         break;
       case CommentAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
+        this._popupComponent.updateData({isSubmiting: true});
+        this._api.addComment(update.comment, update.movie)
+          .then((response) => {
+            this._commentsModel.addComment(updateType, response.comments);
+            this._popupComponent.updateData({isSubmiting: false});
+          })
+          .catch(() => {
+            this._popupComponent.shakeForm(this._popupComponent.updateData({isSubmiting: false}));
+          });
         break;
     }
   }
@@ -242,14 +253,18 @@ export default class Movie {
       UpdateType.PATCH,
       commentId,
     );
-    this._deleteCommentFromMovie(commentId);
   }
 
-  _handleAddComment(comment) {
+  _handleAddComment(comment, movie) {
+    const update = {
+      comment,
+      movie,
+    };
+
     this._handleCommentAction(
       CommentAction.ADD_COMMENT,
       UpdateType.PATCH,
-      comment,
+      update,
     );
   }
 
