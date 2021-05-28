@@ -15,8 +15,9 @@ const EXTRA_COUNT = 2;
 const MOVIES_PER_STEP = 5;
 
 export default class MovieList {
-  constructor(movieListComponent, moviesModel, filterModel, api) {
-    this._api = api;
+  constructor(movieListComponent, moviesModel, filterModel, apiMovie, apiComments) {
+    this._apiMovies = apiMovie;
+    this._apiComments = apiComments;
     this._movieListContainer = movieListComponent;
     this._currentSortType = SortType.DEFAULT;
     this._moviesModel = moviesModel;
@@ -42,9 +43,6 @@ export default class MovieList {
   }
 
   init() {
-    render(this._movieListContainer, this._filmsComponent, RenderPosition.BEFOREEND);
-    render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
-
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
@@ -94,7 +92,7 @@ export default class MovieList {
     this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    render(this._movieListContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+    render(this._movieListContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderNoMovies() {
@@ -120,7 +118,7 @@ export default class MovieList {
   }
 
   _renderMovie(container, movie) {
-    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._api);
+    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._apiComments);
     moviePresenter.init(movie);
     if (movie.id in this._filmCartPresenter) {
       this._filmCartPresenter[movie.id].push(moviePresenter);
@@ -146,6 +144,8 @@ export default class MovieList {
     remove(this._sortComponent);
     remove(this._topRatedComponent);
     remove(this._mostCommentedComponent);
+    remove(this._filmsComponent);
+    remove(this._filmsListComponent);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -169,7 +169,7 @@ export default class MovieList {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case MovieAction.UPDATE_MOVIE:
-        this._api.updateMovie(update).then((response) => {
+        this._apiMovies.updateMovie(update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
         });
     }
@@ -230,6 +230,11 @@ export default class MovieList {
       return;
     }
 
+    this._renderSort();
+
+    render(this._movieListContainer, this._filmsComponent, RenderPosition.BEFOREEND);
+    render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
+
     const movies = this._getMovies();
 
     if (movies.length === 0) {
@@ -237,7 +242,6 @@ export default class MovieList {
       return;
     }
 
-    this._renderSort();
     const filmsListContainerElement = this._filmsListComponent.getElement().querySelector('.films-list__container');
 
     const movieCount = movies.length;

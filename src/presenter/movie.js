@@ -4,6 +4,8 @@ import {render, RenderPosition, remove, replace} from '../utils/render';
 import {clipDescription} from '../utils/movie';
 import {MovieAction, UpdateType, CommentAction} from '../const';
 import CommentsModel from '../model/comments';
+import {toast} from '../utils/toast';
+import {isOnline} from '../utils/common';
 
 const Mode = {
   CART: 'CART',
@@ -140,6 +142,11 @@ export default class Movie {
   }
 
   _cardClick(movie) {
+    if (!isOnline()) {
+      toast('you can\'t view information about the movie offline');
+      return;
+    }
+
     this._popupComponent = new PopupExtraMoviesView(this._movie, this._comments);
 
     const onEscKeyDown = (e) => {
@@ -182,6 +189,11 @@ export default class Movie {
   }
 
   _handleWatchListClick() {
+    if (!isOnline()) {
+      toast('you can\'t add to watchlist offline');
+      return;
+    }
+
     this._changeData(
       MovieAction.UPDATE_MOVIE,
       UpdateType.MINOR,
@@ -195,6 +207,11 @@ export default class Movie {
   }
 
   _handleAlreadyWatchedClick() {
+    if (!isOnline()) {
+      toast('you can\'t add to alreadyWatch offline');
+      return;
+    }
+
     this._changeData(
       MovieAction.UPDATE_MOVIE,
       UpdateType.MINOR,
@@ -208,6 +225,11 @@ export default class Movie {
   }
 
   _handleFavoriteClick() {
+    if (!isOnline()) {
+      toast('you can\'t add to favorite offline');
+      return;
+    }
+
     this._changeData(
       MovieAction.UPDATE_MOVIE,
       UpdateType.MINOR,
